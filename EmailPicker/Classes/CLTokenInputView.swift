@@ -136,7 +136,7 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
         self.textField.keyboardType = .emailAddress
         self.textField.autocorrectionType = .no
         self.textField.autocapitalizationType = .none
-        self.textField.delegate = self
+        self.textField.myDelegate = self
         //self.additionalTextFieldYOffset = 0.0
         self.additionalTextFieldYOffset = 1.5
         self.textField.addTarget(self, action: #selector(CLTokenInputView.onTextFieldDidChange(sender:)), for: .editingChanged)
@@ -372,7 +372,7 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
     
     //MARK: UITextFieldDelegate
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         //print("textFieldDidBeginEditing:")
         self.delegate?.tokenInputViewDidBeginEditing(aView: self)
         
@@ -380,21 +380,22 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
         self.unselectAllTokenViewsAnimated(animated: true)
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         //print("textFieldDidEndEditing:")
 
         self.delegate?.tokenInputViewDidEndEditing(aView: self)
         self.tokenViews.last?.hideUnselectedComma = true
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         //print("textFieldShouldReturn:")
 
         self.tokenizeTextfieldText()
         return false
     }
     
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         //print("textField:shouldChangeCharactersInRange:replacementString:\(string)")
 
         if string.characters.count > 0 && self.tokenizationCharacters.contains(string) {
@@ -476,8 +477,6 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
             context.move(to: CGPoint(x: self.bounds.width, y: self.bounds.size.height))
             context.addLine(to: CGPoint(x: bounds.width, y: bounds.height))
             context.strokePath()
-        }
-        
+        }   
     }
-    
 }
