@@ -3,7 +3,7 @@ PODS:
     - APAddressBook/Core (= 0.2.3)
   - APAddressBook/Core (0.2.3)
   - CLTokenInputView (2.3.0)
-  - EmailPicker (0.1.0):
+  - EmailPicker (1.0.1):
     - APAddressBook
     - CLTokenInputView
 
@@ -14,13 +14,13 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   EmailPicker:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
   APAddressBook: 2a91bf05999548bea210ec9d1a68073f4dc8bfce
   CLTokenInputView: 9dc1ffb7c9d2d81787e69a63c75bd97b0b2d1e76
-  EmailPicker: 5a70451fd75262c4f7660adce2928e2d7767d721
+  EmailPicker: 200ae4c49ea96eaf01b59f0ce91d06fb84be5f04
 
 PODFILE CHECKSUM: da9d1e13f66e63669289cb28a04ee0148ad333ed
 
-COCOAPODS: 1.0.0
+COCOAPODS: 1.1.1
