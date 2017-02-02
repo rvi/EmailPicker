@@ -85,11 +85,9 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/APAddressBook/APAddressBook.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/CLTokenInputView/CLTokenInputView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/EmailPicker/EmailPicker.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/APAddressBook/APAddressBook.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/CLTokenInputView/CLTokenInputView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/EmailPicker/EmailPicker.framework"
 fi

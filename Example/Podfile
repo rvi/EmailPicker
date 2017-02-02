@@ -2,7 +2,6 @@ use_frameworks!
 
 target 'EmailPicker_Example' do
   pod 'EmailPicker', :path => '../'
-  pod 'CLTokenInputView'
   pod 'APAddressBook'
 
   target 'EmailPicker_Tests' do
