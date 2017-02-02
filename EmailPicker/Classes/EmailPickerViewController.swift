@@ -11,6 +11,7 @@ import APAddressBook
 
 protocol EmailPickerControllerStyle {
     func pickerFont() -> UIFont
+    func textColor() -> UIColor
 }
 
 extension UIViewController: EmailPickerControllerStyle {
@@ -45,9 +46,8 @@ open class EmailPickerViewController: UIViewController {
     
     
     fileprivate lazy var tokenInputView: CLTokenInputView = {
-        let view = CLTokenInputView()
-        view.tintColor = UIColor.red
-        view.delegate = self
+        let view = CLTokenInputView(delegate: self)
+        view.tintColor = self.delegate.textColor()
         view.placeholderText = "Enter an email address"
         view.drawBottomBorder = false
         view.tokenizationCharacters = [" ", ","]
@@ -97,17 +97,21 @@ open class EmailPickerViewController: UIViewController {
     fileprivate var completion: CompletionHandler?
     fileprivate var infoText: String?
     
-    
+    var delegate: EmailPickerControllerStyle!
     //MARK: - Init 
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        delegate = self
     }
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        delegate = self
     }
     public init(infoText: String? = nil, completion: @escaping CompletionHandler) {
         super.init(nibName: nil, bundle: nil)
+        delegate = self
         self.completion = completion
         self.infoText = infoText
         
@@ -254,6 +258,10 @@ extension EmailPickerViewController: CLTokenInputViewDelegate {
     
     internal func tokenInputView(aView: CLTokenInputView, didChangeHeightTo height: CGFloat) {
         tokenHeightConstraint?.constant = height
+    }
+    
+    internal func tokenInputViewFont(for aView:CLTokenInputView) -> UIFont {
+        return delegate.pickerFont()
     }
 }
 

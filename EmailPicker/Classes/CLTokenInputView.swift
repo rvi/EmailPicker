@@ -17,6 +17,7 @@ protocol CLTokenInputViewDelegate: class {
     func tokenInputView(aView:CLTokenInputView, didRemoveToken token:CLToken)
     func tokenInputView(aView:CLTokenInputView, tokenForText text:String) -> CLToken?
     func tokenInputView(aView:CLTokenInputView, didChangeHeightTo height:CGFloat)
+    func tokenInputViewFont(for aView:CLTokenInputView) -> UIFont
 }
 
 class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenViewDelegate {
@@ -137,6 +138,7 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
         self.textField.autocorrectionType = .no
         self.textField.autocapitalizationType = .none
         self.textField.myDelegate = self
+        self.textField.font = delegate?.tokenInputViewFont(for: self)
         //self.additionalTextFieldYOffset = 0.0
         self.additionalTextFieldYOffset = 1.5
         self.textField.addTarget(self, action: #selector(CLTokenInputView.onTextFieldDidChange(sender:)), for: .editingChanged)
@@ -144,7 +146,7 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
         
         self.fieldLabel = UILabel(frame: CGRect.zero)
         self.fieldLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.fieldLabel.font = self.textField.font
+        self.fieldLabel.font = delegate?.tokenInputViewFont(for: self)
         self.fieldLabel.textColor = self.fieldColor
         self.addSubview(self.fieldLabel)
         self.fieldLabel.isHidden = true
@@ -153,6 +155,12 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
 
         self.intrinsicContentHeight = STANDARD_ROW_HEIGHT
         self.repositionViews()
+    }
+    
+    init(delegate: CLTokenInputViewDelegate) {
+        super.init(frame: CGRect.zero)
+        self.delegate = delegate
+        commonInit()
     }
     
     override init(frame: CGRect) {
@@ -172,6 +180,7 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
     }
     
     override func tintColorDidChange() {
+        self.textField.textColor = self.tintColor
         self.tokenViews.forEach { $0.tintColor = self.tintColor }
     }
     
@@ -182,7 +191,7 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
         
         self.tokens.append(token)
         
-        let tokenView:CLTokenView = CLTokenView(token: token, font: self.textField.font)
+        let tokenView:CLTokenView = CLTokenView(token: token, font: delegate?.tokenInputViewFont(for: self))
         tokenView.translatesAutoresizingMaskIntoConstraints = false
         tokenView.tintColor = self.tintColor
         tokenView.delegate = self
