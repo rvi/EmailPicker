@@ -2,7 +2,6 @@
 #import <UIKit/UIKit.h>
 #endif
 
-
 FOUNDATION_EXPORT double EmailPickerVersionNumber;
 FOUNDATION_EXPORT const unsigned char EmailPickerVersionString[];
 

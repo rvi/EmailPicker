@@ -27,7 +27,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'EmailPicker/Classes/**/*'
 
-  s.dependency 'CLTokenInputView'
   s.dependency 'APAddressBook'
 
 

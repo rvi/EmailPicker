@@ -7,8 +7,21 @@
 //
 
 import UIKit
-import CLTokenInputView
 import APAddressBook
+
+protocol EmailPickerControllerStyle {
+    func pickerFont() -> UIFont
+}
+
+extension UIViewController: EmailPickerControllerStyle {
+    func pickerFont() -> UIFont {
+        return UIFont(name: "AmericanTypewriter", size: 17)!
+    }
+    
+    func textColor() -> UIColor {
+        return UIColor(red: 0.0823, green: 0.4941, blue: 0.9843, alpha: 1)
+    }
+}
 
 
 open class EmailPickerViewController: UIViewController {
@@ -33,9 +46,10 @@ open class EmailPickerViewController: UIViewController {
     
     fileprivate lazy var tokenInputView: CLTokenInputView = {
         let view = CLTokenInputView()
+        view.tintColor = UIColor.red
         view.delegate = self
         view.placeholderText = "Enter an email address"
-        view.drawBottomBorder = true
+        view.drawBottomBorder = false
         view.tokenizationCharacters = [" ", ","]
         view.backgroundColor = .white
         return view
@@ -156,7 +170,7 @@ extension EmailPickerViewController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if tokenInputView.isEditing == false {
+        if !tokenInputView.isEditing() {
             tokenInputView.beginEditing()
         }
     }
@@ -183,8 +197,7 @@ extension EmailPickerViewController {
 
 extension EmailPickerViewController: CLTokenInputViewDelegate {
     
-    public func tokenInputView(_ view: CLTokenInputView, didChangeText text: String?) {
-        guard let text = text else { return }
+    internal func tokenInputView(aView: CLTokenInputView, didChangeText text: String) {
         
         if text == "" {
             filteredContacts = contacts
@@ -196,13 +209,14 @@ extension EmailPickerViewController: CLTokenInputViewDelegate {
         tableView.reloadData()
     }
     
-    public func tokenInputView(_ view: CLTokenInputView, didAdd token: CLToken) {
+
+    internal func tokenInputView(aView:CLTokenInputView, didAddToken token:CLToken) {
         if let contact = token.context as? APContact {
             selectedContacts.append(contact)
         }
     }
     
-    public func tokenInputView(_ view: CLTokenInputView, didRemove token: CLToken) {
+    internal func tokenInputView(aView:CLTokenInputView, didRemoveToken token:CLToken) {
         if let contact = token.context as? APContact {
             if let idx = selectedContacts.index(of: contact) {
                 selectedContacts.remove(at: idx)
@@ -211,7 +225,7 @@ extension EmailPickerViewController: CLTokenInputViewDelegate {
         }
     }
     
-    public func tokenInputView(_ view: CLTokenInputView, tokenForText text: String) -> CLToken? {
+    internal func tokenInputView(aView view: CLTokenInputView, tokenForText text: String) -> CLToken? {
         if filteredContacts.count > 0 {
             guard let contact = filteredContacts.first else { return nil }
             
@@ -230,15 +244,15 @@ extension EmailPickerViewController: CLTokenInputViewDelegate {
         return nil
     }
     
-    public func tokenInputViewDidEndEditing(_ view: CLTokenInputView) {
+    internal func tokenInputViewDidEndEditing(aView view: CLTokenInputView) {
         
     }
     
-    public func tokenInputViewDidBeginEditing(_ view: CLTokenInputView) {
+    internal func tokenInputViewDidBeginEditing(aView view: CLTokenInputView) {
         
     }
     
-    public func tokenInputView(_ view: CLTokenInputView, didChangeHeightTo height: CGFloat) {
+    internal func tokenInputView(aView: CLTokenInputView, didChangeHeightTo height: CGFloat) {
         tokenHeightConstraint?.constant = height
     }
 }
@@ -287,12 +301,12 @@ extension EmailPickerViewController: UITableViewDelegate {
             tableView.reloadData()
             
             guard let token = makeToken(forContact: contact) else { return }
-            tokenInputView.remove(token)
+            tokenInputView.removeToken(token: token)
         }
         else { //we don't have it, lets select it
             selectPreferedEmail(forContact: contact, fromView: tableView.cellForRow(at: indexPath)?.contentView, completion: { (contact) -> Void in
                 guard let token = self.makeToken(forContact: contact) else { return }
-                self.tokenInputView.add(token)
+                self.tokenInputView.addToken(token: token)
             })
         }
     }

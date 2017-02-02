@@ -18,9 +18,6 @@
   },
   "source_files": "EmailPicker/Classes/**/*",
   "dependencies": {
-    "CLTokenInputView": [
-
-    ],
     "APAddressBook": [
 
     ]
