@@ -286,6 +286,7 @@ extension EmailPickerViewController: UITableViewDataSource {
 
         cell.thumbnailImageView.image = contact.thumbnail
         cell.label.text = contact.name?.compositeName
+        cell.label.font = delegate.pickerFont()
         cell.accessoryType = isSelected ? .checkmark : .none
         
         return cell
