@@ -22,6 +22,9 @@ class ViewController: UIViewController, EmailPickerControllerStyle {
         return UIColor.green
     }
     
+    func numberMaxOfEmails() -> Int? {
+        return 5
+    }
 }
 
 

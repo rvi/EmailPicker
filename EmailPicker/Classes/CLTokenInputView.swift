@@ -18,6 +18,7 @@ protocol CLTokenInputViewDelegate: class {
     func tokenInputView(aView:CLTokenInputView, tokenForText text:String) -> CLToken?
     func tokenInputView(aView:CLTokenInputView, didChangeHeightTo height:CGFloat)
     func tokenInputViewFont(for aView:CLTokenInputView) -> UIFont?
+    func tokenInputViewCanAddToken(for aView:CLTokenInputView) -> Bool
 }
 
 class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenViewDelegate {
@@ -407,7 +408,9 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         //print("textField:shouldChangeCharactersInRange:replacementString:\(string)")
 
-        if string.characters.count > 0 && self.tokenizationCharacters.contains(string) {
+        if !(delegate?.tokenInputViewCanAddToken(for: self) ?? true) {
+            return false
+        } else if string.characters.count > 0 && self.tokenizationCharacters.contains(string) {
             self.tokenizeTextfieldText()
             return false
         }
@@ -415,7 +418,7 @@ class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenVi
     }
     
     func onTextFieldDidChange(sender:UITextField) {
-       // print("onTextFieldDidChange")
+       //print("onTextFieldDidChange: \(self.textField.text!)")
         self.delegate?.tokenInputView(aView: self, didChangeText: self.textField.text!)
     }
     

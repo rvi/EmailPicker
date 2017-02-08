@@ -12,6 +12,7 @@ import APAddressBook
 public protocol EmailPickerControllerStyle {
     func pickerFont() -> UIFont?
     func textColor() -> UIColor
+    func numberMaxOfEmails() -> Int?
 }
 
 open class EmailPickerViewController: UIViewController {
@@ -86,7 +87,11 @@ open class EmailPickerViewController: UIViewController {
     fileprivate var completion: CompletionHandler?
     fileprivate var infoText: String?
     
-    public var styleDelegate: EmailPickerControllerStyle?
+    public var styleDelegate: EmailPickerControllerStyle? {
+        didSet {
+            updateTitle()
+        }
+    }
     //MARK: - Init 
     
     required public init?(coder aDecoder: NSCoder) {
@@ -101,7 +106,7 @@ open class EmailPickerViewController: UIViewController {
         self.completion = completion
         self.infoText = infoText
         
-        navigationItem.title = "Select Contacts"
+        updateTitle()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(EmailPickerViewController.cancel))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(EmailPickerViewController.done))
     }
@@ -156,6 +161,13 @@ extension EmailPickerViewController {
         loadContacts()
     }
     
+    fileprivate func updateTitle() {
+        if let maxEmails = styleDelegate?.numberMaxOfEmails() {
+            navigationItem.title = "\(selectedContacts.count) / \(maxEmails)"
+        } else {
+            navigationItem.title = "Select Contacts"
+        }
+    }
     
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -187,6 +199,12 @@ extension EmailPickerViewController {
 
 extension EmailPickerViewController: CLTokenInputViewDelegate {
     
+    
+    internal func tokenInputViewCanAddToken(for aView: CLTokenInputView) -> Bool {
+        return selectedContacts.count < styleDelegate?.numberMaxOfEmails() ?? Int(INT_MAX)
+    }
+
+    
     internal func tokenInputView(aView: CLTokenInputView, didChangeText text: String) {
         
         if text == "" {
@@ -198,12 +216,12 @@ extension EmailPickerViewController: CLTokenInputViewDelegate {
         
         tableView.reloadData()
     }
-    
 
     internal func tokenInputView(aView:CLTokenInputView, didAddToken token:CLToken) {
         if let contact = token.context as? APContact {
             selectedContacts.append(contact)
         }
+        updateTitle()
     }
     
     internal func tokenInputView(aView:CLTokenInputView, didRemoveToken token:CLToken) {
@@ -212,6 +230,7 @@ extension EmailPickerViewController: CLTokenInputViewDelegate {
                 selectedContacts.remove(at: idx)
             }
             tableView.reloadData()
+            updateTitle()
         }
     }
     
@@ -300,7 +319,7 @@ extension EmailPickerViewController: UITableViewDelegate {
         }
         else { //we don't have it, lets select it
             selectPreferedEmail(forContact: contact, fromView: tableView.cellForRow(at: indexPath)?.contentView, completion: { (contact) -> Void in
-                guard let token = self.makeToken(forContact: contact) else { return }
+                guard let token = self.makeToken(forContact: contact), self.tokenInputViewCanAddToken(for: self.tokenInputView) else { return }
                 self.tokenInputView.addToken(token: token)
             })
         }
