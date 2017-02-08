@@ -9,21 +9,10 @@
 import UIKit
 import APAddressBook
 
-protocol EmailPickerControllerStyle {
+public protocol EmailPickerControllerStyle {
     func pickerFont() -> UIFont
     func textColor() -> UIColor
 }
-
-extension UIViewController: EmailPickerControllerStyle {
-    func pickerFont() -> UIFont {
-        return UIFont(name: "AmericanTypewriter", size: 17)!
-    }
-    
-    func textColor() -> UIColor {
-        return UIColor(red: 0.0823, green: 0.4941, blue: 0.9843, alpha: 1)
-    }
-}
-
 
 open class EmailPickerViewController: UIViewController {
     ///A typealias for an email.
@@ -47,7 +36,7 @@ open class EmailPickerViewController: UIViewController {
     
     fileprivate lazy var tokenInputView: CLTokenInputView = {
         let view = CLTokenInputView(delegate: self)
-        view.tintColor = self.delegate.textColor()
+        view.tintColor = self.styleDelegate?.textColor()
         view.placeholderText = "Enter an email address"
         view.drawBottomBorder = false
         view.tokenizationCharacters = [" ", ","]
@@ -97,21 +86,18 @@ open class EmailPickerViewController: UIViewController {
     fileprivate var completion: CompletionHandler?
     fileprivate var infoText: String?
     
-    var delegate: EmailPickerControllerStyle!
+    public var styleDelegate: EmailPickerControllerStyle?
     //MARK: - Init 
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        delegate = self
     }
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        delegate = self
     }
     public init(infoText: String? = nil, completion: @escaping CompletionHandler) {
         super.init(nibName: nil, bundle: nil)
-        delegate = self
         self.completion = completion
         self.infoText = infoText
         
@@ -260,8 +246,8 @@ extension EmailPickerViewController: CLTokenInputViewDelegate {
         tokenHeightConstraint?.constant = height
     }
     
-    internal func tokenInputViewFont(for aView:CLTokenInputView) -> UIFont {
-        return delegate.pickerFont()
+    internal func tokenInputViewFont(for aView:CLTokenInputView) -> UIFont? {
+        return styleDelegate?.pickerFont()
     }
 }
 
@@ -286,7 +272,7 @@ extension EmailPickerViewController: UITableViewDataSource {
 
         cell.thumbnailImageView.image = contact.thumbnail
         cell.label.text = contact.name?.compositeName
-        cell.label.font = delegate.pickerFont()
+        cell.label.font = styleDelegate?.pickerFont()
         cell.accessoryType = isSelected ? .checkmark : .none
         
         return cell
@@ -551,21 +537,3 @@ class InsetLabel: UILabel {
         super.drawText(in: UIEdgeInsetsInsetRect(rect, insets))
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

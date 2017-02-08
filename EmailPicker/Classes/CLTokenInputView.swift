@@ -17,7 +17,7 @@ protocol CLTokenInputViewDelegate: class {
     func tokenInputView(aView:CLTokenInputView, didRemoveToken token:CLToken)
     func tokenInputView(aView:CLTokenInputView, tokenForText text:String) -> CLToken?
     func tokenInputView(aView:CLTokenInputView, didChangeHeightTo height:CGFloat)
-    func tokenInputViewFont(for aView:CLTokenInputView) -> UIFont
+    func tokenInputViewFont(for aView:CLTokenInputView) -> UIFont?
 }
 
 class CLTokenInputView: UIView, CLBackspaceDetectingTextFieldDelegate, CLTokenViewDelegate {

@@ -9,10 +9,18 @@
 import UIKit
 import EmailPicker
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, EmailPickerControllerStyle {
     
     @IBOutlet weak var contactsLabel: UILabel!
     @IBOutlet weak var selectContactsButton: UIButton!
+    
+    func pickerFont() -> UIFont {
+        return UIFont.boldSystemFont(ofSize: 15)
+    }
+    
+    func textColor() -> UIColor {
+        return UIColor.green
+    }
     
 }
 
@@ -52,9 +60,11 @@ extension ViewController {
             }
         }
         let textToShow = "To share your fun results with some friends, please type their emails or select their names from the list. Enjoy!"
-        let picker = EmailPickerViewController.emailPickerModal(textToShow, completion: handler)
-        
-        present(picker, animated: true, completion: nil)
+        let navPicker = EmailPickerViewController.emailPickerModal(textToShow, completion: handler)
+        if let picker = navPicker.viewControllers.first as? EmailPickerViewController {
+         picker.styleDelegate = self
+        }
+        present(navPicker, animated: true, completion: nil)
     }
     
 }
