@@ -10,7 +10,7 @@ import UIKit
 import APAddressBook
 
 public protocol EmailPickerControllerStyle {
-    func pickerFont() -> UIFont
+    func pickerFont() -> UIFont?
     func textColor() -> UIColor
 }
 

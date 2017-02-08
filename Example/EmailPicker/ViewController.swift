@@ -14,7 +14,7 @@ class ViewController: UIViewController, EmailPickerControllerStyle {
     @IBOutlet weak var contactsLabel: UILabel!
     @IBOutlet weak var selectContactsButton: UIButton!
     
-    func pickerFont() -> UIFont {
+    func pickerFont() -> UIFont? {
         return UIFont.boldSystemFont(ofSize: 15)
     }
     
